@@ -43,6 +43,18 @@ describe('Task A Tests', function () {
             assert.deepEqual(GetSuitableIO(receiver, emitter, 'increment'), ['getCount']);
         });
     });
+
+       describe('GetSuitableIO(receiver,emitter,’incrementt’)', function () {
+        it(`it should fail`, function () {
+
+            try {
+                GetSuitableIO(receiver, emitter, 'incrementt')
+            }
+            catch (e) {
+                assert.equal(e.message, 'Undefined property: incrementt');
+            }
+        });
+    });
 });
 
 let consoleSpy:any = null;
@@ -78,6 +90,19 @@ describe('Task B Tests', () => {
             Connect(receiver, emitter, 'increment', 'getCount');
 
             expect(consoleSpy.calledWith(4)).to.be.true;
+        })
+    })
+
+     describe('Connect(receiver,emitter,’increment,’getHello’)', () => {
+        it('should fail because there are no connection', () => {
+
+            try {
+                Connect(receiver, emitter, 'increment', 'getHello');
+            }
+            catch (e) {
+                assert.equal(e.message, 'There no connection between: increment and getHello');
+            }
+
         })
     })
 });
