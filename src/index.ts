@@ -2,7 +2,7 @@ mocha.setup('bdd');
 
 (async function () {
 
-  await import('./core.test');
+  await import('test/core.test');
   mocha.run();
 
 })();
