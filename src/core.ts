@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import {TYPE_FUNCTION, TYPE_NUMBER, TYPE_STRING, TYPE_VOID} from "./types";
 
 function Type(type: any) {
     return Reflect.metadata("design:type", type);
@@ -15,24 +16,24 @@ function ReturnType(type: any) {
 
 export class Emitter {
 
-    @Type('string')
+    @Type(TYPE_STRING)
     name: string = '';
 
-    @Type('function')
-    @ReturnType('string')
+    @Type(TYPE_FUNCTION)
+    @ReturnType(TYPE_STRING)
     getHello(): string {
         return 'Hello';
     }
 
-    @Type('function')
-    @ReturnType('number')
+    @Type(TYPE_FUNCTION)
+    @ReturnType(TYPE_NUMBER)
     getCount(): number {
         return 3;
     }
 
-    @Type('function')
-    @ParamTypes('number')
-    @ReturnType('void')
+    @Type(TYPE_FUNCTION)
+    @ParamTypes(TYPE_NUMBER)
+    @ReturnType(TYPE_VOID)
     apply(c: number) {
         console.log('applying: ', c);
     }
@@ -41,19 +42,19 @@ export class Emitter {
 
 export class Receiver {
 
-    @Type('string')
+    @Type(TYPE_STRING)
     surname: string = '';
 
-    @Type('function')
-    @ParamTypes('string')
-    @ReturnType('void')
+    @Type(TYPE_FUNCTION)
+    @ParamTypes(TYPE_STRING)
+    @ReturnType(TYPE_VOID)
     log(s: string) {
         console.log(s);
     }
 
-    @Type('function')
-    @ParamTypes('number')
-    @ReturnType('void')
+    @Type(TYPE_FUNCTION)
+    @ParamTypes(TYPE_NUMBER)
+    @ReturnType(TYPE_VOID)
     increment(c: number) {
         c++;
         console.log(c);
