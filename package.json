@@ -12,5 +12,6 @@
   },
   "scripts": {
     "test": "mocha -r ts-node/register src/**/*.test.ts"
-  }
+  },
+  "main": "src/index.ts"
 }
