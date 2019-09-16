@@ -1,68 +1,10 @@
 import 'reflect-metadata';
 import {TYPE_FUNCTION, TYPE_NUMBER, TYPE_STRING, TYPE_VOID} from "./types";
 
-function Type(type: any) {
+function Type (type: string):any {
+
     return Reflect.metadata("design:type", type);
-}
-
-function ParamTypes(...types: any[]) {
-    return Reflect.metadata("design:paramtypes", types);
-}
-
-function ReturnType(type: any) {
-    return Reflect.metadata("design:returntype", type);
-}
-
-
-export class Emitter {
-
-    @Type(TYPE_STRING)
-    name: string = '';
-
-    @Type(TYPE_FUNCTION)
-    @ReturnType(TYPE_STRING)
-    getHello(): string {
-        return 'Hello';
-    }
-
-    @Type(TYPE_FUNCTION)
-    @ReturnType(TYPE_NUMBER)
-    getCount(): number {
-        return 3;
-    }
-
-    @Type(TYPE_FUNCTION)
-    @ParamTypes(TYPE_NUMBER)
-    @ReturnType(TYPE_VOID)
-    apply(c: number) {
-        console.log('applying: ', c);
-    }
-}
-
-
-export class Receiver {
-
-    @Type(TYPE_STRING)
-    surname: string = '';
-
-    @Type(TYPE_FUNCTION)
-    @ParamTypes(TYPE_STRING)
-    @ReturnType(TYPE_VOID)
-    log(s: string) {
-        console.log(s);
-    }
-
-    @Type(TYPE_FUNCTION)
-    @ParamTypes(TYPE_NUMBER)
-    @ReturnType(TYPE_VOID)
-    increment(c: number) {
-        c++;
-        console.log(c);
-    }
-}
-
-let emitter = new Emitter();
-let receiver = new Receiver();
+};
 
 interface MetaData {
     key: string;
@@ -71,20 +13,81 @@ interface MetaData {
     returnType: string;
 }
 
+export class Emitter {
+
+    @Type('string')
+    name: string = '';
+
+    @Type('function():  string')
+    getHello(): string {
+        return 'Hello';
+    }
+
+    @Type('function():number')
+    getCount(): number {
+        return 3;
+    }
+
+    @Type('function(number):void')
+    apply(c: number) {
+        console.log('applying: ', c);
+    }
+}
+
+const getMetaData = (obj: any, key: any)  => {
+
+    let data = Reflect.getMetadata("design:type", obj, key) || '';
+
+    data = data.replace(/\s/g, '');
+
+    let metaData: MetaData = {} as MetaData;
+
+    metaData.key = key;
+    metaData.paramTypes = [];
+
+    if(data.includes(TYPE_FUNCTION)) {
+
+        metaData.type = TYPE_FUNCTION;
+
+        metaData.returnType = data.split(':')[1];
+
+        metaData.paramTypes = data.substring(
+            data.lastIndexOf("(") + 1,
+            data.lastIndexOf(")")
+        )
+            .split(',');
+    }
+    else {
+        metaData.type = data;
+    }
+
+    return metaData;
+};
+
+export class Receiver {
+
+    @Type(TYPE_STRING)
+    surname: string = '';
+
+    @Type('function(string):void')
+    log(s: string) {
+        console.log(s);
+    }
+
+    @Type('function(number):void')
+    increment(c: number) {
+        c++;
+        console.log(c);
+    }
+}
+
 const getObjectPropMetaData = (obj: any, key: string): MetaData => {
 
     if (!obj.hasOwnProperty(key) && typeof obj[key] !== 'function') {
         throw new Error(`Undefined property: ${key}`);
     }
 
-    let metaData: MetaData = {} as MetaData;
-
-    metaData.key = key;
-    metaData.type = Reflect.getMetadata("design:type", obj, key);
-    metaData.paramTypes = Reflect.getMetadata("design:paramtypes", obj, key) || [];
-    metaData.returnType = Reflect.getMetadata("design:returntype", obj, key);
-
-    return metaData;
+    return getMetaData(obj, key);
 };
 
 const getObjectPropsMetaData = (obj: any) => {
